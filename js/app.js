@@ -87,13 +87,16 @@ function showAuth(mode = 'login') {
 function showApp() {
   document.getElementById('authScreen').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
-  document.getElementById('userEmail').textContent = currentUser.email;
+  const emailEl = document.getElementById('userEmail');
+  if (emailEl) emailEl.textContent = currentUser.email;
+  const avatarEl = document.getElementById('topbarAvatar');
+  if (avatarEl) avatarEl.textContent = (currentUser.email||'F')[0].toUpperCase();
 }
 
 function renderAuthForm(mode) {
   const isLogin = mode === 'login';
   document.getElementById('authForm').innerHTML = `
-    <div class="auth-logo">Freed</div>
+    <div class="auth-logo">Freed<span class="auth-logo-dot">.</span></div>
     <div class="auth-subtitle">${isLogin ? 'Welcome back' : 'Create your account'}</div>
     <div class="form-group">
       <label class="form-label">Email</label>
@@ -128,7 +131,7 @@ async function submitAuth(mode) {
   const errEl = document.getElementById('authError');
   const btn = document.getElementById('authBtn');
   errEl.textContent = '';
-  errEl.style.color = 'var(--rose)';
+  errEl.style.color = 'var(--coral)';
 
   if (!email || !password) { errEl.textContent = 'Please fill in all fields.'; return; }
   if (mode === 'register') {
@@ -169,7 +172,7 @@ async function forgotPassword() {
   const errEl = document.getElementById('authError');
   if (!email) { errEl.textContent = 'Enter your email address first.'; return; }
   const { error } = await sb.auth.resetPasswordForEmail(email);
-  errEl.style.color = error ? 'var(--rose)' : 'var(--green)';
+  errEl.style.color = error ? 'var(--coral)' : 'var(--green)';
   errEl.textContent = error ? error.message : 'Reset link sent — check your email.';
 }
 
@@ -177,6 +180,8 @@ async function signOut() {
   await sb.auth.signOut();
   currentUser = null;
   state = getDefaultData();
+  if (heroChartInstance) { heroChartInstance.destroy(); heroChartInstance = null; }
+  if (retireChartInstance) { retireChartInstance.destroy(); retireChartInstance = null; }
   closeModal();
   showAuth('login');
 }
@@ -199,7 +204,11 @@ document.getElementById('nextMonth').onclick = () => {
   updateMonthLabel(); renderAll();
 };
 function updateMonthLabel() {
-  document.getElementById('monthLabel').textContent = `${MONTHS[viewMonth]} ${viewYear}`;
+  const label = `${MONTHS[viewMonth]} ${viewYear}`;
+  const el1 = document.getElementById('monthLabel');
+  const el2 = document.getElementById('monthLabelMobile');
+  if (el1) el1.textContent = label;
+  if (el2) el2.textContent = label;
 }
 
 // ============================================================
@@ -207,9 +216,15 @@ function updateMonthLabel() {
 // ============================================================
 function switchPage(pageId, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  // Deactivate all nav items in both sidebar and bottom nav
+  document.querySelectorAll('.nav-item, .sidebar-nav-item').forEach(b => b.classList.remove('active'));
   document.getElementById(pageId).classList.add('active');
   btn.classList.add('active');
+  // Sync the other nav (sidebar <-> bottom nav)
+  const page = btn.dataset ? btn.dataset.page : null;
+  if (page) {
+    document.querySelectorAll(`[data-page="${page}"]`).forEach(b => b.classList.add('active'));
+  }
   renderAll();
 }
 
@@ -269,6 +284,8 @@ function renderAll() {
   if (document.getElementById('pageRetirement').classList.contains('active')) calcRetirement();
 }
 
+let heroChartInstance = null;
+
 function renderDashboard() {
   const spent = getTotalSpent(viewYear, viewMonth);
   const income = getIncome(viewYear, viewMonth);
@@ -276,27 +293,122 @@ function renderDashboard() {
   const nw = getNetWorth();
   const target = (state.settings&&state.settings.freedomTarget)||10000000;
   const freedomPct = Math.min(100, Math.round(nw/target*100));
+  const balance = income - spent;
 
   document.getElementById('netWorthValue').textContent = fmtFull(nw);
   document.getElementById('totalAssets').textContent = fmt(getTotalAssets());
-  document.getElementById('totalLiabilities').textContent = fmtFull(getTotalLiabilities());
   document.getElementById('monthlySave').textContent = fmt(getMonthSavingsContrib());
+  document.getElementById('heroBalance').textContent = fmtFull(balance);
   document.getElementById('freedomPct').textContent = freedomPct + '%';
   document.getElementById('freedomBar').style.width = freedomPct + '%';
   document.getElementById('totalSpent').textContent = fmtFull(spent);
   document.getElementById('spentVsBudget').textContent = `of ${fmtFull(totalBudget)} budget`;
   document.getElementById('totalIncome').textContent = fmtFull(income);
-  document.getElementById('incomeBalance').textContent = `Balance: ${fmtFull(income - spent)}`;
 
   renderMiniCatList(document.getElementById('catList'));
-  renderMonthlyChart();
+  renderHeroChart();
+}
+
+function renderHeroChart() {
+  const canvas = document.getElementById('heroChart');
+  if (!canvas) return;
+
+  const months = [];
+  for (let i=5; i>=0; i--) {
+    let m = viewMonth - i, y = viewYear;
+    while (m < 0) { m += 12; y--; }
+    months.push({y, m, label: MONTHS[m].substring(0,3)});
+  }
+
+  const spentData = months.map(({y,m}) => getTotalSpent(y,m));
+  const incomeData = months.map(({y,m}) => getIncome(y,m));
+  const labels = months.map(({label}) => label);
+
+  if (heroChartInstance) { heroChartInstance.destroy(); heroChartInstance = null; }
+
+  heroChartInstance = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Spending',
+          data: spentData,
+          borderColor: 'rgba(255,255,255,0.95)',
+          borderWidth: 2,
+          pointRadius: 3,
+          pointBackgroundColor: 'white',
+          pointBorderColor: 'transparent',
+          fill: true,
+          backgroundColor: 'rgba(255,255,255,0.12)',
+          tension: 0.4,
+        },
+        {
+          label: 'Income',
+          data: incomeData,
+          borderColor: 'rgba(255,255,255,0.45)',
+          borderWidth: 2,
+          borderDash: [5,4],
+          pointRadius: 0,
+          fill: false,
+          tension: 0.4,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(4,100,98,0.9)',
+          borderColor: 'rgba(255,255,255,0.2)',
+          borderWidth: 1,
+          titleColor: 'rgba(255,255,255,0.7)',
+          bodyColor: '#ffffff',
+          titleFont: { family: 'DM Mono, monospace', size: 10 },
+          bodyFont: { family: 'DM Mono, monospace', size: 11 },
+          padding: 10,
+          callbacks: { label: ctx => ' R ' + ctx.parsed.y.toLocaleString('en-ZA') }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: 'rgba(255,255,255,0.6)', font: { family: 'DM Mono, monospace', size: 10 } },
+          grid: { color: 'rgba(255,255,255,0.08)' },
+          border: { color: 'rgba(255,255,255,0.15)' }
+        },
+        y: {
+          ticks: {
+            color: 'rgba(255,255,255,0.6)',
+            font: { family: 'DM Mono, monospace', size: 10 },
+            maxTicksLimit: 4,
+            callback: v => v >= 1000000 ? 'R'+(v/1000000).toFixed(1)+'m' : v >= 1000 ? 'R'+(v/1000).toFixed(0)+'k' : 'R'+v
+          },
+          grid: { color: 'rgba(255,255,255,0.08)' },
+          border: { color: 'rgba(255,255,255,0.15)' }
+        }
+      }
+    }
+  });
+
+  // Legend
+  const leg = document.getElementById('heroLegend');
+  if (leg) leg.innerHTML = `
+    <div class="hero-legend-item"><div class="hero-legend-dot" style="background:rgba(255,255,255,0.9)"></div>Spending</div>
+    <div class="hero-legend-item"><div class="hero-legend-dot" style="background:rgba(255,255,255,0.45);border:1px dashed rgba(255,255,255,0.6)"></div>Income</div>`;
 }
 
 function renderMiniCatList(container) {
   if (!container) return;
   const cats = state.categories||[];
-  if (!cats.length) { container.innerHTML = '<div class="swipe-hint">No categories yet. Add one in Spending.</div>'; return; }
-  container.innerHTML = cats.slice(0,6).map(cat => catItemHTML(cat, false)).join('');
+  const activeCats = cats.filter(cat => getCategorySpend(cat.id, viewYear, viewMonth) > 0);
+  if (!activeCats.length) {
+    container.innerHTML = '<div class="swipe-hint">No expenses recorded this month. Tap + Add Expense to get started.</div>';
+    return;
+  }
+  container.innerHTML = activeCats.map(cat => catItemHTML(cat, false)).join('');
 }
 
 function catItemHTML(cat, clickable) {
@@ -309,11 +421,11 @@ function catItemHTML(cat, clickable) {
     <div class="cat-info">
       <div class="cat-name">${cat.name}</div>
       <div class="cat-budget">Budget: ${fmtFull(cat.budget||0)}</div>
-      <div class="cat-progress"><div class="cat-progress-fill" style="width:${pct}%;background:${over?'var(--rose)':cat.color}"></div></div>
+      <div class="cat-progress"><div class="cat-progress-fill" style="width:${pct}%;background:${over?'var(--coral)':cat.color}"></div></div>
     </div>
     <div class="cat-amount">
-      <div class="amt" style="color:${over?'var(--rose)':'var(--text)'}">${fmtFull(spend)}</div>
-      <div class="pct" style="color:${over?'var(--rose)':'var(--text3)'}">${pct}%</div>
+      <div class="amt" style="color:${over?'var(--coral)':'var(--text)'}">${fmtFull(spend)}</div>
+      <div class="pct" style="color:${over?'var(--coral)':'var(--text3)'}">${pct}%</div>
     </div>
   </div>`;
 }
@@ -334,15 +446,15 @@ function renderMonthlyChart() {
     const cur = y===viewYear && m===viewMonth;
     return `<div class="bar-col">
       <div class="bar-seg-wrap">
-        <div class="bar-seg" style="height:${h1}px;width:46%;background:${cur?'var(--rose)':'rgba(224,92,122,0.35)'}"></div>
-        <div class="bar-seg" style="height:${h2}px;width:46%;background:${cur?'var(--green)':'rgba(92,217,138,0.35)'}"></div>
+        <div class="bar-seg" style="height:${h1}px;width:46%;background:${cur?'var(--coral)':'rgba(224,92,122,0.35)'}"></div>
+        <div class="bar-seg" style="height:${h2}px;width:46%;background:${cur?'var(--mint)':'rgba(46,204,154,0.25)'}"></div>
       </div>
       <div class="bar-lbl">${label}</div>
     </div>`;
   }).join('');
   document.getElementById('chartLegend').innerHTML =
-    `<div class="legend-item"><div class="legend-dot" style="background:var(--rose)"></div>Spending</div>
-     <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Income</div>`;
+    `<div class="legend-item"><div class="legend-dot" style="background:var(--coral)"></div>Spending</div>
+     <div class="legend-item"><div class="legend-dot" style="background:var(--mint)"></div>Income</div>`;
 }
 
 function renderSpending() {
@@ -367,7 +479,7 @@ function renderSpending() {
               <div class="cat-budget">${tx.date}</div>
             </div>
             <div class="cat-amount">
-              <div class="amt" style="color:${tx.type==='income'?'var(--green)':'var(--rose)'}">${tx.type==='income'?'+':'-'}${fmtFull(tx.amount)}</div>
+              <div class="amt" style="color:${tx.type==='income'?'var(--green)':'var(--coral)'}">${tx.type==='income'?'+':'-'}${fmtFull(tx.amount)}</div>
             </div>
           </div>`;
         }).join('')}</div><div class="swipe-hint">Tap transaction to delete</div>`
@@ -383,8 +495,8 @@ function renderSpending() {
     bl.innerHTML = `
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;">
         <div style="display:flex;justify-content:space-between;margin-bottom:10px;"><span style="font-size:0.8rem;color:var(--text2)">Total Budget</span><span style="font-family:var(--font-mono);font-size:0.85rem;color:var(--gold)">${fmtFull(totalBudget)}</span></div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:10px;"><span style="font-size:0.8rem;color:var(--text2)">Total Spent</span><span style="font-family:var(--font-mono);font-size:0.85rem;color:${totalSpent>totalBudget?'var(--rose)':'var(--green)'}">${fmtFull(totalSpent)}</span></div>
-        <div style="display:flex;justify-content:space-between;"><span style="font-size:0.8rem;color:var(--text2)">Remaining</span><span style="font-family:var(--font-mono);font-size:0.85rem;color:${rem<0?'var(--rose)':'var(--teal)'}">${fmtFull(rem)}</span></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:10px;"><span style="font-size:0.8rem;color:var(--text2)">Total Spent</span><span style="font-family:var(--font-mono);font-size:0.85rem;color:${totalSpent>totalBudget?'var(--coral)':'var(--green)'}">${fmtFull(totalSpent)}</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="font-size:0.8rem;color:var(--text2)">Remaining</span><span style="font-family:var(--font-mono);font-size:0.85rem;color:${rem<0?'var(--coral)':'var(--mint)'}">${fmtFull(rem)}</span></div>
       </div>
       ${cats.map(cat => {
         const spend = getCategorySpend(cat.id, viewYear, viewMonth);
@@ -393,9 +505,9 @@ function renderSpending() {
         return `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:8px;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;">
             <span style="font-size:0.85rem;color:var(--text)">${cat.icon} ${cat.name}</span>
-            <span style="font-family:var(--font-mono);font-size:0.75rem;color:${r2<0?'var(--rose)':'var(--text2)'}">${r2<0?'Over '+fmtFull(-r2):fmtFull(r2)+' left'}</span>
+            <span style="font-family:var(--font-mono);font-size:0.75rem;color:${r2<0?'var(--coral)':'var(--text2)'}">${r2<0?'Over '+fmtFull(-r2):fmtFull(r2)+' left'}</span>
           </div>
-          <div class="cat-progress" style="height:5px"><div class="cat-progress-fill" style="width:${pct}%;background:${r2<0?'var(--rose)':cat.color}"></div></div>
+          <div class="cat-progress" style="height:5px"><div class="cat-progress-fill" style="width:${pct}%;background:${r2<0?'var(--coral)':cat.color}"></div></div>
           <div style="font-size:0.68rem;color:var(--text3);margin-top:4px">${fmtFull(spend)} of ${fmtFull(cat.budget||0)}</div>
         </div>`;
       }).join('')}`;
@@ -484,19 +596,95 @@ function calcRetirement() {
   renderRetireChart(age, targetAge, monthly, annual, current);
 }
 
+let retireChartInstance = null;
+
 function renderRetireChart(age, targetAge, monthly, annual, current) {
-  const container = document.getElementById('retireChart');
-  if (!container) return;
-  const r = annual/100/12, years = Math.max(1, targetAge-age);
-  const points = [];
-  for (let y=0; y<=years; y++) { const n=y*12; points.push({y, fv: current*Math.pow(1+r,n)+monthly*(Math.pow(1+r,n)-1)/r}); }
-  const maxFV = points[points.length-1].fv;
-  const step = Math.max(1, Math.floor(years/7));
-  const labels = points.filter((_,i) => i%step===0 || i===points.length-1);
-  container.innerHTML = labels.map(p => {
-    const h = Math.round(p.fv/maxFV*95);
-    return `<div class="bar-col"><div class="bar-seg-wrap" style="height:100px"><div class="bar-seg" style="height:${h}px;background:linear-gradient(180deg,var(--teal),rgba(78,205,196,0.3));width:100%"></div></div><div class="bar-lbl">Yr${p.y}</div></div>`;
-  }).join('');
+  const canvas = document.getElementById('retireChart');
+  if (!canvas) return;
+
+  const r = annual / 100 / 12;
+  const years = Math.max(1, targetAge - age);
+
+  // Build data points — one per year
+  const labels = [], data = [];
+  for (let y = 0; y <= years; y++) {
+    const n = y * 12;
+    const fv = current * Math.pow(1+r, n) + monthly * (Math.pow(1+r, n) - 1) / r;
+    labels.push('Yr ' + (age + y));
+    data.push(Math.round(fv));
+  }
+
+  // Destroy previous instance to avoid canvas reuse error
+  if (retireChartInstance) { retireChartInstance.destroy(); retireChartInstance = null; }
+
+  retireChartInstance = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Projected Fund',
+        data,
+        borderColor: '#40916c',
+        borderWidth: 2,
+        pointRadius: 0,
+        pointHoverRadius: 5,
+        pointHoverBackgroundColor: '#40916c',
+        pointHoverBorderColor: '#fff',
+        pointHoverBorderWidth: 2,
+        fill: true,
+        backgroundColor: function(ctx) {
+          const gradient = ctx.chart.ctx.createLinearGradient(0, 0, 0, ctx.chart.height);
+          gradient.addColorStop(0, 'rgba(64,145,108,0.25)');
+          gradient.addColorStop(1, 'rgba(6,182,212,0.00)');
+          return gradient;
+        },
+        tension: 0.4,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#ffffff',
+          borderColor: 'rgba(45,106,79,0.20)',
+          borderWidth: 1.5,
+          titleColor: '#8fb89a',
+          bodyColor: '#1b3a2d',
+          titleFont: { family: 'JetBrains Mono, monospace', size: 11 },
+          bodyFont: { family: 'JetBrains Mono, monospace', size: 12 },
+          padding: 10,
+          callbacks: {
+            label: ctx => ' R ' + ctx.parsed.y.toLocaleString('en-ZA')
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: '#8fb89a',
+            font: { family: 'JetBrains Mono, monospace', size: 10 },
+            maxTicksLimit: 8,
+            maxRotation: 0,
+          },
+          grid: { color: 'rgba(45,106,79,0.06)' },
+          border: { color: 'rgba(45,106,79,0.10)' }
+        },
+        y: {
+          ticks: {
+            color: '#8fb89a',
+            font: { family: 'JetBrains Mono, monospace', size: 10 },
+            maxTicksLimit: 5,
+            callback: v => v >= 1000000 ? 'R ' + (v/1000000).toFixed(1) + 'm' : v >= 1000 ? 'R ' + (v/1000).toFixed(0) + 'k' : 'R ' + v
+          },
+          grid: { color: 'rgba(45,106,79,0.06)' },
+          border: { color: 'rgba(45,106,79,0.10)' }
+        }
+      }
+    }
+  });
 }
 
 // ============================================================

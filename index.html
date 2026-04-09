@@ -3,307 +3,241 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-<meta name="theme-color" content="#070b14"/>
+<meta name="theme-color" content="#f0f7f0"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
 <meta name="apple-mobile-web-app-title" content="Freed"/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <link rel="manifest" href="manifest.json"/>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='28'>💰</text></svg>"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%2340916c'/><text y='24' x='16' font-size='18' text-anchor='middle'>💎</text></svg>"/>
 <title>Freed — Financial Freedom</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Mono:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="css/app.css"/>
-<style>
-/* ── AUTH SCREEN ─────────────────────────────────── */
-#authScreen {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: var(--bg);
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 24px 20px calc(var(--safe-bottom) + 24px);
-  z-index: 999;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-#authForm {
-  width: 100%;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-}
-
-.auth-logo {
-  font-family: var(--font-display);
-  font-size: 3.5rem;
-  font-weight: 300;
-  color: var(--gold);
-  text-align: center;
-  margin-bottom: 6px;
-  letter-spacing: 0.06em;
-}
-
-.auth-subtitle {
-  font-size: 0.85rem;
-  color: var(--text3);
-  text-align: center;
-  margin-bottom: 32px;
-  letter-spacing: 0.04em;
-}
-
-.auth-error {
-  font-size: 0.8rem;
-  color: var(--rose);
-  margin-bottom: 4px;
-  min-height: 20px;
-  text-align: center;
-}
-
-.auth-switch {
-  font-size: 0.8rem;
-  color: var(--text3);
-  text-align: center;
-  margin-top: 16px;
-  line-height: 1.8;
-}
-
-.auth-switch span {
-  color: var(--gold);
-  cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-/* ── USER BAR (top-right sign out) ──────────────── */
-.user-bar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-#userEmail {
-  font-size: 0.7rem;
-  color: var(--text3);
-  font-family: var(--font-mono);
-  max-width: 120px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.signout-btn {
-  background: none;
-  border: 1px solid var(--border2);
-  color: var(--text3);
-  font-size: 0.68rem;
-  font-family: var(--font-body);
-  padding: 4px 10px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
-  touch-action: manipulation;
-  letter-spacing: 0.04em;
-}
-
-.signout-btn:hover,
-.signout-btn:active { border-color: var(--rose); color: var(--rose); }
-</style>
 </head>
 <body>
 
-<!-- ── AUTH SCREEN ── -->
-<div id="authScreen">
-  <div id="authForm"></div>
-</div>
+<div id="authScreen"><div id="authForm"></div></div>
 
-<!-- ── MAIN APP ── -->
 <div id="app" style="display:none">
 
-  <div class="top-bar">
-    <div class="logo">Freed <span>Finance</span></div>
-    <div class="user-bar">
-      <span id="userEmail"></span>
-      <div class="month-selector">
-        <button id="prevMonth" aria-label="Previous month">&#8249;</button>
-        <span class="month-label" id="monthLabel">Apr 2026</span>
-        <button id="nextMonth" aria-label="Next month">&#8250;</button>
+  <!-- SLIM ICON SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">💎</div>
+    <nav class="sidebar-nav">
+      <button class="sidebar-nav-item active" onclick="switchPage('pageDashboard',this)" data-page="pageDashboard" data-label="Overview">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      </button>
+      <button class="sidebar-nav-item" onclick="switchPage('pageSpending',this)" data-page="pageSpending" data-label="Spending">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v4H3z"/><path d="M3 10h18v11H3z"/><path d="M7 15h4"/></svg>
+      </button>
+      <button class="sidebar-nav-item" onclick="switchPage('pageInvestments',this)" data-page="pageInvestments" data-label="Wealth">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      </button>
+      <button class="sidebar-nav-item" onclick="switchPage('pageRetirement',this)" data-page="pageRetirement" data-label="Retire">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </button>
+      <button class="sidebar-nav-item" onclick="switchPage('pageInsights',this)" data-page="pageInsights" data-label="Insights">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+      </button>
+    </nav>
+    <button class="sidebar-signout" onclick="signOut()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    </button>
+  </aside>
+
+  <div class="main-wrapper">
+
+    <!-- MOBILE TOP BAR -->
+    <div class="mobile-topbar">
+      <div class="mobile-logo"><div class="logo-icon-sm">💎</div>Freed</div>
+      <div class="mobile-month">
+        <button id="prevMonthMobile">&#8249;</button>
+        <span id="monthLabelMobile">Apr 2026</span>
+        <button id="nextMonthMobile">&#8250;</button>
       </div>
-      <button class="signout-btn" onclick="signOut()">Sign out</button>
     </div>
+
+    <!-- DESKTOP TOPBAR -->
+    <div class="desktop-topbar">
+      <div class="topbar-month">
+        <button id="prevMonth">&#8249;</button>
+        <span id="monthLabel">Apr 2026</span>
+        <button id="nextMonth">&#8250;</button>
+      </div>
+      <div class="topbar-user">
+        <div class="topbar-avatar" id="topbarAvatar">F</div>
+        <div class="topbar-email" id="userEmail"></div>
+      </div>
+    </div>
+
+    <div class="content-scroll" id="mainContent">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="pageDashboard">
+        <div class="page-panel">
+          <div class="page-header">
+            <div>
+              <div class="page-title">Overview</div>
+              <div class="page-subtitle">Financial snapshot</div>
+            </div>
+            <button class="header-action-btn" onclick="openModal('expense')">+ Add Expense</button>
+          </div>
+
+          <div class="hero-card">
+            <div class="hero-left">
+              <div>
+                <div class="hero-label">Net Worth</div>
+                <div class="hero-value" id="netWorthValue">R 0</div>
+              </div>
+              <div>
+                <div class="hero-freedom-label"><span>Freedom goal</span><span id="freedomPct">0%</span></div>
+                <div class="hero-bar-track"><div class="hero-bar-fill" id="freedomBar" style="width:0%"></div></div>
+              </div>
+              <div class="hero-stats">
+                <div class="hero-stat"><div class="hero-stat-label">Assets</div><div class="hero-stat-val" id="totalAssets">R 0</div></div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat"><div class="hero-stat-label">Saving</div><div class="hero-stat-val" id="monthlySave">R 0</div></div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat"><div class="hero-stat-label">Balance</div><div class="hero-stat-val" id="heroBalance">R 0</div></div>
+              </div>
+            </div>
+            <div class="hero-right">
+              <div class="hero-chart-label">6-Month Trend</div>
+              <div class="hero-chart-wrap">
+                <canvas id="heroChart" role="img" aria-label="6 month spending and income overview"></canvas>
+              </div>
+              <div class="hero-chart-legend" id="heroLegend"></div>
+            </div>
+          </div>
+
+          <div class="widget-grid">
+            <div class="widget-card accent-coral">
+              <div class="widget-icon">💸</div>
+              <div class="widget-label">Spent This Month</div>
+              <div class="widget-value" id="totalSpent">R 0</div>
+              <div class="widget-sub" id="spentVsBudget">of R 0 budget</div>
+            </div>
+            <div class="widget-card accent-mint" style="cursor:pointer" onclick="openModal('income')">
+              <div class="widget-icon">💵</div>
+              <div class="widget-label">Income</div>
+              <div class="widget-value" id="totalIncome">R 0</div>
+              <div class="widget-sub">tap to update</div>
+            </div>
+          </div>
+
+          <div class="section-header"><span>This Month</span></div>
+          <div class="cat-list" id="catList"></div>
+        </div>
+      </div>
+
+      <!-- SPENDING -->
+      <div class="page" id="pageSpending">
+        <div class="page-panel">
+          <div class="page-header"><div><div class="page-title">Spending</div></div></div>
+          <div class="tab-bar">
+            <button class="tab active" onclick="switchTab(this,'tabCategories')">Categories</button>
+            <button class="tab" onclick="switchTab(this,'tabTransactions')">Transactions</button>
+            <button class="tab" onclick="switchTab(this,'tabBudgets')">Budgets</button>
+          </div>
+          <div id="tabCategories" class="tab-content">
+            <div class="section-header"><span>Spend Categories</span><button class="add-btn" onclick="openModal('category')">+ Category</button></div>
+            <div class="cat-list" id="fullCatList"></div>
+          </div>
+          <div id="tabTransactions" class="tab-content" style="display:none">
+            <div class="section-header"><span>Transactions</span><button class="add-btn" onclick="openModal('transaction')">+ Add</button></div>
+            <div id="txList"></div>
+          </div>
+          <div id="tabBudgets" class="tab-content" style="display:none">
+            <div class="section-header"><span>Budget Overview</span></div>
+            <div id="budgetList"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WEALTH -->
+      <div class="page" id="pageInvestments">
+        <div class="page-panel">
+          <div class="page-header"><div><div class="page-title">Wealth</div></div></div>
+          <div class="section-header"><span>Investments</span><button class="add-btn" onclick="openModal('investment')">+ Add</button></div>
+          <div class="investment-list" id="invList"></div>
+          <div class="section-header" style="margin-top:20px"><span>Savings Goals</span><button class="add-btn" onclick="openModal('saving')">+ Goal</button></div>
+          <div class="investment-list" id="savingsList"></div>
+        </div>
+      </div>
+
+      <!-- RETIRE -->
+      <div class="page" id="pageRetirement">
+        <div class="page-panel">
+          <div class="page-header"><div><div class="page-title">Retirement Planner</div></div></div>
+          <div class="retire-hero">
+            <div class="retire-hero-label">Projected Retirement Fund</div>
+            <div class="retire-hero-value" id="retireProjected">R 0</div>
+            <div class="retire-hero-meta">
+              <div><div class="retire-meta-label">Monthly Contrib.</div><div class="retire-meta-val" id="retireMonthly">R 0</div></div>
+              <div><div class="retire-meta-label">Years to Go</div><div class="retire-meta-val" id="retireYears">0</div></div>
+            </div>
+          </div>
+          <div class="retire-settings-card">
+            <div class="retire-settings-title">Settings</div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Current Age</label><input class="form-input" type="number" id="retireAge" value="30" min="18" max="70" oninput="calcRetirement()" inputmode="numeric"/></div>
+              <div class="form-group"><label class="form-label">Retire Age</label><input class="form-input" type="number" id="retireTargetAge" value="65" min="40" max="80" oninput="calcRetirement()" inputmode="numeric"/></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Monthly Contrib. (R)</label><input class="form-input" type="number" id="retireContrib" value="5000" oninput="calcRetirement()" inputmode="decimal"/></div>
+              <div class="form-group"><label class="form-label">Annual Return (%)</label><input class="form-input" type="number" id="retireReturn" value="10" step="0.5" oninput="calcRetirement()" inputmode="decimal"/></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Current Savings (R)</label><input class="form-input" type="number" id="retireCurrent" value="0" oninput="calcRetirement()" inputmode="decimal"/></div>
+              <div class="form-group"><label class="form-label">Freedom Target (R)</label><input class="form-input" type="number" id="freedomTarget" value="10000000" oninput="calcRetirement()" inputmode="decimal"/></div>
+            </div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-card-title">Projected Growth</div>
+            <div style="position:relative;height:200px;"><canvas id="retireChart" role="img" aria-label="Projected retirement fund growth chart"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INSIGHTS -->
+      <div class="page" id="pageInsights">
+        <div class="page-panel">
+          <div class="page-header"><div><div class="page-title">Insights</div></div></div>
+          <div id="insightsList"></div>
+        </div>
+      </div>
+
+    </div><!-- /content-scroll -->
+
+    <!-- MOBILE BOTTOM NAV -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" onclick="switchPage('pageDashboard',this)" data-page="pageDashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        <span>Overview</span>
+      </button>
+      <button class="nav-item" onclick="switchPage('pageSpending',this)" data-page="pageSpending">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v4H3z"/><path d="M3 10h18v11H3z"/><path d="M7 15h4"/></svg>
+        <span>Spending</span>
+      </button>
+      <button class="nav-item" onclick="switchPage('pageInvestments',this)" data-page="pageInvestments">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        <span>Wealth</span>
+      </button>
+      <button class="nav-item" onclick="switchPage('pageRetirement',this)" data-page="pageRetirement">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>Retire</span>
+      </button>
+      <button class="nav-item" onclick="switchPage('pageInsights',this)" data-page="pageInsights">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+        <span>Insights</span>
+      </button>
+    </nav>
+
   </div>
+</div>
 
-  <div class="main-content" id="mainContent">
-
-    <!-- ── DASHBOARD ── -->
-    <div class="page active" id="pageDashboard">
-      <div class="net-worth-card" id="netWorthCard">
-        <div class="nw-label">NET WORTH</div>
-        <div class="nw-value" id="netWorthValue">R 0</div>
-        <div class="nw-meta">
-          <div class="nw-meta-item">Assets<span id="totalAssets">R 0</span></div>
-          <div class="nw-meta-item">Liabilities<span id="totalLiabilities">R 0</span></div>
-          <div class="nw-meta-item">Monthly Save<span id="monthlySave">R 0</span></div>
-        </div>
-        <div class="freedom-bar">
-          <div class="freedom-bar-label">
-            <span>Financial Freedom Progress</span>
-            <span id="freedomPct">0%</span>
-          </div>
-          <div class="bar-track"><div class="bar-fill" id="freedomBar" style="width:0%"></div></div>
-        </div>
-      </div>
-
-      <div class="section" style="margin-top:14px;">
-        <div class="summary-grid">
-          <div class="summary-card" style="--accent-color:var(--rose)">
-            <div class="label">SPENT</div>
-            <div class="value negative" id="totalSpent">R 0</div>
-            <div class="sub" id="spentVsBudget">of R 0 budget</div>
-          </div>
-          <div class="summary-card" style="--accent-color:var(--green)">
-            <div class="label">INCOME</div>
-            <div class="value positive" id="totalIncome" style="cursor:pointer">R 0</div>
-            <div class="sub" id="incomeBalance">Balance: R 0</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="chart-wrap">
-        <div class="chart-title">6-MONTH OVERVIEW</div>
-        <div class="bar-chart" id="monthlyChart"></div>
-        <div class="chart-legend" id="chartLegend"></div>
-      </div>
-
-      <div class="section" style="margin-top:14px;">
-        <div class="section-title">
-          This Month
-          <button class="add-btn" onclick="openModal('expense')">+ Add Expense</button>
-        </div>
-        <div class="cat-list" id="catList"></div>
-      </div>
-    </div>
-
-    <!-- ── SPENDING ── -->
-    <div class="page" id="pageSpending">
-      <div class="tab-bar">
-        <button class="tab active" onclick="switchTab(this,'tabCategories')">Categories</button>
-        <button class="tab" onclick="switchTab(this,'tabTransactions')">Transactions</button>
-        <button class="tab" onclick="switchTab(this,'tabBudgets')">Budgets</button>
-      </div>
-      <div id="tabCategories" class="tab-content">
-        <div class="section" style="margin-top:14px;">
-          <div class="section-title">Spend Categories<button class="add-btn" onclick="openModal('category')">+ Category</button></div>
-          <div class="cat-list" id="fullCatList"></div>
-        </div>
-      </div>
-      <div id="tabTransactions" class="tab-content" style="display:none">
-        <div class="section" style="margin-top:14px;">
-          <div class="section-title">Transactions<button class="add-btn" onclick="openModal('transaction')">+ Add</button></div>
-          <div id="txList"></div>
-        </div>
-      </div>
-      <div id="tabBudgets" class="tab-content" style="display:none">
-        <div class="section" style="margin-top:14px;">
-          <div class="section-title">Budget Limits</div>
-          <div id="budgetList"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── INVESTMENTS ── -->
-    <div class="page" id="pageInvestments">
-      <div class="section" style="margin-top:14px;">
-        <div class="section-title">Investments<button class="add-btn" onclick="openModal('investment')">+ Add</button></div>
-        <div class="investment-list" id="invList"></div>
-      </div>
-      <div class="section" style="margin-top:14px;">
-        <div class="section-title">Savings Goals<button class="add-btn" onclick="openModal('saving')">+ Goal</button></div>
-        <div class="investment-list" id="savingsList"></div>
-      </div>
-    </div>
-
-    <!-- ── RETIREMENT ── -->
-    <div class="page" id="pageRetirement">
-      <div class="section" style="margin-top:14px;">
-        <div class="section-title">Retirement Planner</div>
-        <div class="retire-card">
-          <div class="r-label">PROJECTED RETIREMENT FUND</div>
-          <div class="r-value" id="retireProjected">R 0</div>
-        </div>
-        <div class="retire-grid">
-          <div class="summary-card" style="--accent-color:var(--teal)">
-            <div class="label">MONTHLY CONTRIB.</div>
-            <div class="value" id="retireMonthly" style="font-size:1.1rem">R 0</div>
-          </div>
-          <div class="summary-card" style="--accent-color:var(--violet)">
-            <div class="label">YEARS TO RETIRE</div>
-            <div class="value" id="retireYears" style="font-size:1.1rem">0</div>
-          </div>
-        </div>
-        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-top:10px;">
-          <div style="font-size:0.68rem;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:12px;">RETIREMENT SETTINGS</div>
-          <div class="form-row">
-            <div class="form-group"><label class="form-label">Current Age</label><input class="form-input" type="number" id="retireAge" value="30" min="18" max="70" oninput="calcRetirement()" inputmode="numeric"/></div>
-            <div class="form-group"><label class="form-label">Retire Age</label><input class="form-input" type="number" id="retireTargetAge" value="65" min="40" max="80" oninput="calcRetirement()" inputmode="numeric"/></div>
-          </div>
-          <div class="form-row">
-            <div class="form-group"><label class="form-label">Monthly Contrib. (R)</label><input class="form-input" type="number" id="retireContrib" value="5000" oninput="calcRetirement()" inputmode="decimal"/></div>
-            <div class="form-group"><label class="form-label">Annual Return (%)</label><input class="form-input" type="number" id="retireReturn" value="10" step="0.5" oninput="calcRetirement()" inputmode="decimal"/></div>
-          </div>
-          <div class="form-row">
-            <div class="form-group"><label class="form-label">Current Savings (R)</label><input class="form-input" type="number" id="retireCurrent" value="0" oninput="calcRetirement()" inputmode="decimal"/></div>
-            <div class="form-group"><label class="form-label">Freedom Target (R)</label><input class="form-input" type="number" id="freedomTarget" value="10000000" oninput="calcRetirement()" inputmode="decimal"/></div>
-          </div>
-        </div>
-        <div class="chart-wrap" style="margin:10px 0 0;">
-          <div class="chart-title">PROJECTED GROWTH</div>
-          <div class="bar-chart" id="retireChart" style="height:120px;"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── INSIGHTS ── -->
-    <div class="page" id="pageInsights">
-      <div class="section" style="margin-top:14px;">
-        <div class="section-title">Insights</div>
-        <div id="insightsList"></div>
-      </div>
-    </div>
-
-  </div><!-- /main-content -->
-
-  <nav class="bottom-nav" role="navigation" aria-label="Main navigation">
-    <button class="nav-item active" onclick="switchPage('pageDashboard',this)" aria-label="Overview">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      <span>Overview</span>
-    </button>
-    <button class="nav-item" onclick="switchPage('pageSpending',this)" aria-label="Spending">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-      <span>Spending</span>
-    </button>
-    <button class="nav-item" onclick="switchPage('pageInvestments',this)" aria-label="Wealth">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
-      <span>Wealth</span>
-    </button>
-    <button class="nav-item" onclick="switchPage('pageRetirement',this)" aria-label="Retire">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      <span>Retire</span>
-    </button>
-    <button class="nav-item" onclick="switchPage('pageInsights',this)" aria-label="Insights">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
-      <span>Insights</span>
-    </button>
-  </nav>
-
-</div><!-- /app -->
-
-<!-- MODAL -->
-<div class="modal-overlay" id="modalOverlay" onclick="closeModalOnBg(event)" role="dialog" aria-modal="true">
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOnBg(event)">
   <div class="modal" id="modal">
     <div class="modal-handle"></div>
     <div class="modal-title" id="modalTitle">Add Item</div>
@@ -311,13 +245,14 @@
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<!-- Supabase JS SDK (CDN) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="js/app.js"></script>
 <script>
+  document.getElementById('prevMonthMobile').onclick = () => document.getElementById('prevMonth').click();
+  document.getElementById('nextMonthMobile').onclick = () => document.getElementById('nextMonth').click();
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
   }
