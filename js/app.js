@@ -399,6 +399,7 @@ function renderHeroChart() {
           border: { color: 'rgba(255,255,255,0.15)' }
         },
         y: {
+          min: 0,
           ticks: {
             color: 'rgba(255,255,255,0.6)',
             font: { family: 'DM Mono, monospace', size: 10 },

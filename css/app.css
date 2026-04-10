@@ -711,6 +711,12 @@ body {
 .auth-switch { font-size: 0.8rem; color: var(--text3); text-align: center; margin-top: 16px; line-height: 1.9; }
 .auth-switch span { color: var(--green2); cursor: pointer; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
 
+/* ── MOBILE-ONLY ELEMENTS (hidden by default) ── */
+.mobile-topbar { display: none; }
+.mobile-menu { display: none; }
+.mobile-avatar-btn { display: none; }
+.mobile-topbar-right { display: none; }
+
 /* ── MOBILE ─────────────────────────────────── */
 @media (max-width: 700px) {
   #app { flex-direction: column; }
@@ -725,6 +731,9 @@ body {
     border-bottom: 1px solid var(--border);
     flex-shrink: 0;
     gap: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
   }
   .mobile-logo { display: flex; align-items: center; gap: 8px; font-size: 1.1rem; font-weight: 900; color: var(--text); }
   .logo-icon-sm { width: 28px; height: 28px; background: linear-gradient(135deg, var(--green2), var(--green3)); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; }
@@ -733,13 +742,9 @@ body {
 
   .content-scroll { padding: 14px 14px calc(72px + var(--safe-bottom) + 16px); }
 
-  .mobile-topbar-right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
+  .mobile-topbar-right { display: flex; align-items: center; gap: 10px; }
 
-  .mobile-avatar-btn {
+  .mobile-avatar-btn { display: flex; justify-content: center; align-items: center;
     width: 34px; height: 34px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--green2), var(--green3));
