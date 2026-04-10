@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Freed — User Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --green:  #2d6a4f; --green2: #40916c; --green3: #52b788;
+  --green5: #b7e4c7; --green6: #d8f3dc; --green7: #f0faf2;
+  --coral:  #e76f51; --amber:  #f4a261;
+  --text:   #1b3a2d; --text2:  #4a7c59; --text3:  #8fb89a;
+  --bg:     #f0f7f0; --surface: #ffffff;
+  --border: rgba(45,106,79,0.14);
+  --mono: 'DM Mono', monospace;
+  --font: 'Nunito', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: var(--font); -webkit-font-smoothing: antialiased; }
+.page { max-width: 820px; margin: 0 auto; padding: 48px 24px 80px; }
+
+/* Typography */
+h1 { font-size: 2.4rem; font-weight: 900; letter-spacing: -0.03em; color: var(--text); line-height: 1.1; }
+h2 { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); margin: 40px 0 14px; }
+h3 { font-size: 1rem; font-weight: 800; color: var(--green2); margin: 24px 0 10px; letter-spacing: 0.01em; }
+p  { font-size: 0.95rem; color: var(--text2); line-height: 1.7; margin-bottom: 12px; }
+code { font-family: var(--mono); font-size: 0.82rem; background: var(--green6); color: var(--green); padding: 1px 6px; border-radius: 5px; }
+
+/* Hero */
+.hero { background: linear-gradient(135deg, var(--green) 0%, var(--green2) 55%, var(--green3) 100%); border-radius: 24px; padding: 36px 40px; margin-bottom: 48px; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; top: -60px; right: -60px; width: 220px; height: 220px; border-radius: 50%; background: rgba(255,255,255,0.08); pointer-events: none; }
+.hero h1 { color: white; }
+.hero p  { color: rgba(255,255,255,0.75); font-size: 1rem; margin-top: 10px; margin-bottom: 0; }
+.hero-badge { display: inline-block; background: rgba(255,255,255,0.18); color: white; font-family: var(--mono); font-size: 0.72rem; padding: 4px 12px; border-radius: 20px; margin-bottom: 12px; letter-spacing: 0.06em; }
+
+/* Section divider */
+.divider { height: 1px; background: var(--border); margin: 36px 0; }
+
+/* Step cards */
+.steps { display: flex; flex-direction: column; gap: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; margin-bottom: 24px; }
+.step { display: flex; gap: 16px; padding: 18px 20px; border-bottom: 1px solid var(--border); align-items: flex-start; }
+.step:last-child { border-bottom: none; }
+.step-num { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, var(--green2), var(--green3)); color: white; font-weight: 900; font-size: 0.82rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+.step-body { flex: 1; }
+.step-title { font-size: 0.92rem; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+.step-desc  { font-size: 0.82rem; color: var(--text2); line-height: 1.6; }
+
+/* Nav card grid */
+.nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+.nav-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; position: relative; overflow: hidden; }
+.nav-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 14px 14px 0 0; }
+.nc-green::before  { background: var(--green2); }
+.nc-coral::before  { background: var(--coral); }
+.nc-amber::before  { background: var(--amber); }
+.nc-teal::before   { background: #48cae4; }
+.nc-violet::before { background: #8b7cf8; }
+.nav-card-icon { font-size: 1.3rem; margin-bottom: 8px; }
+.nav-card-title { font-size: 0.88rem; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+.nav-card-desc  { font-size: 0.75rem; color: var(--text3); line-height: 1.5; }
+
+/* Tip cards */
+.tip { display: flex; gap: 12px; background: var(--green7); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; margin-bottom: 8px; }
+.tip-icon { font-size: 1.1rem; flex-shrink: 0; }
+.tip-body { font-size: 0.82rem; color: var(--text2); line-height: 1.55; }
+.tip-body strong { font-weight: 800; color: var(--text); }
+
+/* SVG diagram wrapper */
+.diagram-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 24px; margin: 20px 0; overflow: hidden; }
+.diagram-caption { font-family: var(--mono); font-size: 0.7rem; color: var(--text3); text-align: center; margin-top: 14px; letter-spacing: 0.06em; text-transform: uppercase; }
+
+/* Feature highlight */
+.feature-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px 22px; margin-bottom: 16px; }
+.feature-box-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.feature-box-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+.feature-box-title { font-size: 1rem; font-weight: 800; color: var(--text); }
+.feature-box-subtitle { font-size: 0.75rem; color: var(--text3); }
+
+/* Inline badge */
+.badge { display: inline-block; font-family: var(--mono); font-size: 0.68rem; padding: 2px 8px; border-radius: 20px; font-weight: 400; }
+.badge-green { background: var(--green6); color: var(--green); }
+.badge-coral { background: #fff0ee; color: var(--coral); }
+.badge-amber { background: #fff6ee; color: #b86a00; }
+
+/* Calculation explanation */
+.calc-box { background: var(--green7); border-left: 3px solid var(--green2); border-radius: 0 12px 12px 0; padding: 14px 18px; margin: 12px 0; }
+.calc-formula { font-family: var(--mono); font-size: 0.82rem; color: var(--green); font-weight: 400; margin-bottom: 5px; }
+.calc-note { font-size: 0.78rem; color: var(--text2); line-height: 1.5; }
+
+@media (max-width: 600px) {
+  .hero { padding: 24px 20px; }
+  h1 { font-size: 1.8rem; }
+  .nav-grid { grid-template-columns: 1fr; }
+  .page { padding: 24px 16px 60px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">User Guide · v2.0</div>
+    <h1>Freed Finance</h1>
+    <p>Everything you need to track spending, manage investments, eliminate debt and plan your retirement.</p>
+  </div>
+
+  <!-- GETTING STARTED -->
+  <h2>Getting started</h2>
+  <p>Freed is a PWA — install it on your phone from your browser. All data is encrypted and stored securely in your personal Supabase account.</p>
+
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">Create your account</div><div class="step-desc">Open the app and tap <code>Create one</code>. Enter your email and a password (min 6 characters). Click the confirmation link in your email, then sign in.</div></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">Set your monthly income</div><div class="step-desc">Tap the income figure on the Overview screen (shows R 0). Enter your take-home pay for the month. Repeat each month — income is tracked per month independently.</div></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">Set up categories and budgets</div><div class="step-desc">Go to Spending → Categories. Six default categories are pre-loaded. Tap any to set a monthly budget amount, or tap <code>+ Category</code> to add your own.</div></div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-body"><div class="step-title">Add recurring transactions</div><div class="step-desc">Go to Spending → Budgets. Tap <code>+ Add</code> under Recurring Transactions. Add salary, rent, subscriptions — these auto-apply on the 1st of each month.</div></div></div>
+    <div class="step"><div class="step-num">5</div><div class="step-body"><div class="step-title">Add investments and savings goals</div><div class="step-desc">Go to Wealth. Add investments (TFSA, RA, shares) and savings goals (emergency fund, holiday). These feed your net worth calculation.</div></div></div>
+    <div class="step"><div class="step-num">6</div><div class="step-body"><div class="step-title">Add your liabilities</div><div class="step-desc">In the Wealth screen, add any outstanding debt — home loan, vehicle finance, credit card. This completes your true net worth picture.</div></div></div>
+  </div>
+
+  <!-- APP LAYOUT DIAGRAM -->
+  <h2>App layout</h2>
+  <p>On desktop the app shows a slim icon sidebar on the left. On mobile the sidebar is replaced by a bottom navigation bar. Tap any icon to switch screens.</p>
+
+  <div class="diagram-wrap">
+    <svg width="100%" viewBox="0 0 680 260" role="img">
+      <title>App layout diagram showing sidebar on desktop and bottom nav on mobile</title>
+      <desc>Two panels side by side showing the desktop layout with a green sidebar, and the mobile layout with a bottom nav bar</desc>
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+
+      <!-- Desktop panel -->
+      <rect x="30" y="20" width="280" height="220" rx="14" fill="#f0faf2" stroke="#b7e4c7" stroke-width="1"/>
+      <text x="170" y="14" text-anchor="middle" font-family="Nunito,sans-serif" font-size="11" fill="#8fb89a" letter-spacing="0.08em">DESKTOP</text>
+      <!-- Sidebar -->
+      <rect x="30" y="20" width="46" height="220" rx="14" fill="#40916c"/>
+      <rect x="62" y="20" width="14" height="220" fill="#40916c"/>
+      <!-- Sidebar icons -->
+      <rect x="39" y="48" width="28" height="28" rx="7" fill="white"/>
+      <rect x="39" y="86" width="28" height="28" rx="7" fill="rgba(255,255,255,0.25)"/>
+      <rect x="39" y="124" width="28" height="28" rx="7" fill="rgba(255,255,255,0.25)"/>
+      <rect x="39" y="162" width="28" height="28" rx="7" fill="rgba(255,255,255,0.25)"/>
+      <rect x="39" y="200" width="28" height="28" rx="7" fill="rgba(255,255,255,0.25)"/>
+      <!-- Active dot -->
+      <rect x="30" y="55" width="3" height="14" rx="1.5" fill="white"/>
+      <!-- Content area lines -->
+      <rect x="96" y="36" width="100" height="8" rx="3" fill="#b7e4c7"/>
+      <rect x="96" y="52" width="60" height="6" rx="3" fill="#d8f3dc"/>
+      <rect x="96" y="72" width="194" height="56" rx="8" fill="#d8f3dc"/>
+      <rect x="96" y="72" width="194" height="56" rx="8" fill="none" stroke="#b7e4c7" stroke-width="0.5"/>
+      <rect x="96" y="140" width="90" height="40" rx="8" fill="#d8f3dc" stroke="#b7e4c7" stroke-width="0.5"/>
+      <rect x="200" y="140" width="90" height="40" rx="8" fill="#d8f3dc" stroke="#b7e4c7" stroke-width="0.5"/>
+      <rect x="96" y="194" width="194" height="30" rx="6" fill="#d8f3dc" stroke="#b7e4c7" stroke-width="0.5"/>
+      <!-- Labels -->
+      <text x="104" y="107" font-family="Nunito,sans-serif" font-size="10" fill="#4a7c59" font-weight="700">Hero card</text>
+      <text x="104" y="167" font-family="Nunito,sans-serif" font-size="9" fill="#4a7c59">Widgets</text>
+      <text x="104" y="212" font-family="Nunito,sans-serif" font-size="9" fill="#4a7c59">Category list</text>
+
+      <!-- Mobile panel -->
+      <rect x="370" y="20" width="280" height="220" rx="14" fill="#f0faf2" stroke="#b7e4c7" stroke-width="1"/>
+      <text x="510" y="14" text-anchor="middle" font-family="Nunito,sans-serif" font-size="11" fill="#8fb89a" letter-spacing="0.08em">MOBILE</text>
+      <!-- Top bar -->
+      <rect x="370" y="20" width="280" height="34" rx="14" fill="white" stroke="#b7e4c7" stroke-width="0.5"/>
+      <rect x="382" y="20" width="280" height="18" fill="white"/>
+      <rect x="378" y="30" width="50" height="8" rx="3" fill="#b7e4c7"/>
+      <rect x="570" y="28" width="24" height="24" rx="12" fill="#40916c"/>
+      <text x="582" y="44" text-anchor="middle" font-family="Nunito,sans-serif" font-size="9" fill="white" font-weight="900">B</text>
+      <!-- Content -->
+      <rect x="382" y="64" width="256" height="60" rx="10" fill="#40916c" opacity="0.85"/>
+      <rect x="382" y="134" width="122" height="36" rx="8" fill="#d8f3dc" stroke="#b7e4c7" stroke-width="0.5"/>
+      <rect x="516" y="134" width="122" height="36" rx="8" fill="#d8f3dc" stroke="#b7e4c7" stroke-width="0.5"/>
+      <rect x="382" y="178" width="256" height="26" rx="6" fill="#d8f3dc" stroke="#b7e4c7" stroke-width="0.5"/>
+      <!-- Bottom nav -->
+      <rect x="370" y="214" width="280" height="26" rx="0" fill="white" stroke="#b7e4c7" stroke-width="0.5"/>
+      <rect x="371" y="227" width="280" height="13" fill="white"/>
+      <rect x="382" y="217" width="36" height="20" rx="8" fill="#d8f3dc"/>
+      <rect x="432" y="217" width="36" height="20" rx="6" fill="none"/>
+      <rect x="482" y="217" width="36" height="20" rx="6" fill="none"/>
+      <rect x="532" y="217" width="36" height="20" rx="6" fill="none"/>
+      <rect x="582" y="217" width="36" height="20" rx="6" fill="none"/>
+    </svg>
+    <div class="diagram-caption">Left: desktop with icon sidebar · Right: mobile with bottom navigation</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- THE FIVE SCREENS -->
+  <h2>The five screens</h2>
+  <div class="nav-grid">
+    <div class="nav-card nc-green">
+      <div class="nav-card-icon">▦</div>
+      <div class="nav-card-title">Overview</div>
+      <div class="nav-card-desc">Net worth, freedom progress bar, 6-month trend chart, spending vs income widgets, category spend this month.</div>
+    </div>
+    <div class="nav-card nc-coral">
+      <div class="nav-card-icon">≡</div>
+      <div class="nav-card-title">Spending</div>
+      <div class="nav-card-desc">Categories, Transactions and Budgets tabs. Includes recurring transaction management.</div>
+    </div>
+    <div class="nav-card nc-amber">
+      <div class="nav-card-icon">↗</div>
+      <div class="nav-card-title">Wealth</div>
+      <div class="nav-card-desc">Investments with 5-year projections, savings goals with time estimates, liabilities and debt tracker.</div>
+    </div>
+    <div class="nav-card nc-teal">
+      <div class="nav-card-icon">◷</div>
+      <div class="nav-card-title">Retire</div>
+      <div class="nav-card-desc">Compound interest calculator with inflation adjustment. Shows nominal AND real value in today's money.</div>
+    </div>
+    <div class="nav-card nc-violet" style="grid-column: 1 / -1">
+      <div class="nav-card-icon">✦</div>
+      <div class="nav-card-title">Insights</div>
+      <div class="nav-card-desc">Auto-generated financial observations: savings rate, true cash flow, debt overview, budget pace warnings, portfolio projections and savings goal progress.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- RECURRING TRANSACTIONS — DETAILED -->
+  <h2>Recurring transactions</h2>
+  <p>Recurring transactions are the most time-saving feature in Freed. Instead of manually re-entering salary, rent, subscriptions and other fixed monthly items every month, you set them up once and they appear automatically.</p>
+
+  <!-- How it works diagram -->
+  <div class="diagram-wrap">
+    <svg width="100%" viewBox="0 0 680 200" role="img">
+      <title>Recurring transaction flow: set once, auto-applied each month</title>
+      <desc>A diagram showing how a recurring transaction is set up once and then automatically applied to each subsequent month</desc>
+      <defs>
+        <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+
+      <!-- Step 1: Set up -->
+      <rect x="30" y="60" width="140" height="80" rx="12" fill="#d8f3dc" stroke="#52b788" stroke-width="1"/>
+      <text x="100" y="88" text-anchor="middle" font-family="Nunito,sans-serif" font-size="13" font-weight="800" fill="#1b3a2d">Set up once</text>
+      <text x="100" y="106" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4a7c59">Spending → Budgets</text>
+      <text x="100" y="122" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4a7c59">↻ Add Recurring</text>
+
+      <!-- Arrow 1 -->
+      <line x1="170" y1="100" x2="210" y2="100" stroke="#52b788" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+      <!-- Step 2: Stored -->
+      <rect x="210" y="60" width="130" height="80" rx="12" fill="#d8f3dc" stroke="#52b788" stroke-width="1"/>
+      <text x="275" y="88" text-anchor="middle" font-family="Nunito,sans-serif" font-size="13" font-weight="800" fill="#1b3a2d">Saved to cloud</text>
+      <text x="275" y="106" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4a7c59">Name, amount,</text>
+      <text x="275" y="120" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4a7c59">category, type</text>
+
+      <!-- Arrow 2 -->
+      <line x1="340" y1="100" x2="380" y2="100" stroke="#52b788" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+      <!-- Step 3: Auto-apply -->
+      <rect x="380" y="60" width="150" height="80" rx="12" fill="#40916c"/>
+      <text x="455" y="88" text-anchor="middle" font-family="Nunito,sans-serif" font-size="13" font-weight="800" fill="white">Auto-applied</text>
+      <text x="455" y="106" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="rgba(255,255,255,0.8)">On app open</text>
+      <text x="455" y="120" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="rgba(255,255,255,0.8)">each new month</text>
+
+      <!-- Return arrow (loop) -->
+      <path d="M530 100 L570 100 L570 30 L455 30 L455 60" fill="none" stroke="#52b788" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arr2)"/>
+      <text x="572" y="70" font-family="DM Mono,monospace" font-size="9" fill="#8fb89a" text-anchor="start">monthly</text>
+
+      <!-- Recurring badge appears in transaction list -->
+      <rect x="30" y="162" width="500" height="22" rx="5" fill="white" stroke="#b7e4c7" stroke-width="0.5"/>
+      <text x="42" y="177" font-family="Nunito,sans-serif" font-size="10" font-weight="700" fill="#1b3a2d">Rent (recurring)</text>
+      <text x="200" y="177" font-family="DM Mono,monospace" font-size="9" fill="#52b788">↻</text>
+      <text x="480" y="177" text-anchor="end" font-family="DM Mono,monospace" font-size="10" fill="#e76f51">-R 12 000</text>
+      <text x="42" y="158" font-family="DM Mono,monospace" font-size="9" fill="#8fb89a" letter-spacing="0.06em">APPEARS IN TRANSACTION LIST AS:</text>
+    </svg>
+    <div class="diagram-caption">Recurring transactions are stored once and auto-applied on first open each month</div>
+  </div>
+
+  <div class="feature-box">
+    <div class="feature-box-header">
+      <div class="feature-box-icon" style="background:#d8f3dc">↻</div>
+      <div><div class="feature-box-title">How to set up a recurring transaction</div><div class="feature-box-subtitle">Step by step</div></div>
+    </div>
+    <div class="steps" style="border:none;border-radius:0;margin:0">
+      <div class="step" style="border-bottom:1px solid var(--border)"><div class="step-num">1</div><div class="step-body"><div class="step-title">Go to Spending → Budgets tab</div><div class="step-desc">The Budgets tab is the third tab on the Spending screen. Scroll to the bottom to find the Recurring Transactions section.</div></div></div>
+      <div class="step" style="border-bottom:1px solid var(--border)"><div class="step-num">2</div><div class="step-body"><div class="step-title">Tap + Add</div><div class="step-desc">A modal slides up. Select the type (Expense or Income), enter the amount, choose a category (for expenses), and give it a description like "Rent" or "Salary".</div></div></div>
+      <div class="step" style="border-bottom:1px solid var(--border)"><div class="step-num">3</div><div class="step-body"><div class="step-title">Save the recurring transaction</div><div class="step-desc">Tap Save Recurring. It will appear in the list with a <code>↻ monthly</code> badge. It is now stored permanently in your account.</div></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-body"><div class="step-title">It auto-applies from now on</div><div class="step-desc">Every time you open the app in a new month, Freed checks if your recurring transactions have been added yet. If not, it adds them automatically, dated the 1st of the month. They appear in your transaction list with a ↻ symbol.</div></div></div>
+    </div>
+  </div>
+
+  <div class="tip"><div class="tip-icon">💡</div><div class="tip-body"><strong>Good candidates for recurring transactions:</strong> salary, rent/mortgage payment, car instalment, gym membership, streaming subscriptions, school fees, medical aid contributions. Essentially anything that comes out every month at the same amount.</div></div>
+  <div class="tip"><div class="tip-icon">⚠️</div><div class="tip-body"><strong>To delete a recurring transaction:</strong> go to Spending → Budgets, scroll to the Recurring Transactions list, and tap the item. This removes the template — it does not delete past transactions that were already applied.</div></div>
+  <div class="tip"><div class="tip-icon">🔄</div><div class="tip-body"><strong>Auto-apply only runs once per month per recurring item.</strong> It checks whether a transaction with that recurring ID already exists in the current month before adding it — so opening the app multiple times won't create duplicates.</div></div>
+
+  <div class="divider"></div>
+
+  <!-- LIABILITIES -->
+  <h2>Liabilities and debt</h2>
+  <p>Adding your liabilities is critical for an accurate net worth. Without them, your net worth is overstated by the full amount of your debt.</p>
+
+  <div class="diagram-wrap">
+    <svg width="100%" viewBox="0 0 680 170" role="img">
+      <title>Net worth calculation: assets minus liabilities</title>
+      <desc>Formula showing net worth equals total assets minus total liabilities</desc>
+      <!-- Assets box -->
+      <rect x="30" y="30" width="180" height="110" rx="14" fill="#d8f3dc" stroke="#52b788" stroke-width="1"/>
+      <text x="120" y="58" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4a7c59" letter-spacing="0.1em">ASSETS</text>
+      <text x="120" y="82" text-anchor="middle" font-family="Nunito,sans-serif" font-size="20" font-weight="900" fill="#2d6a4f">R 850 000</text>
+      <text x="120" y="100" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#8fb89a">Investments + savings</text>
+      <text x="120" y="115" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#8fb89a">+ property values</text>
+
+      <!-- Minus sign -->
+      <text x="240" y="92" text-anchor="middle" font-family="Nunito,sans-serif" font-size="36" font-weight="900" fill="#b7e4c7">−</text>
+
+      <!-- Liabilities box -->
+      <rect x="270" y="30" width="180" height="110" rx="14" fill="#fff0ee" stroke="#f0997b" stroke-width="1"/>
+      <text x="360" y="58" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#993c1d" letter-spacing="0.1em">LIABILITIES</text>
+      <text x="360" y="82" text-anchor="middle" font-family="Nunito,sans-serif" font-size="20" font-weight="900" fill="#e76f51">R 420 000</text>
+      <text x="360" y="100" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#d85a30">Home loan + car finance</text>
+      <text x="360" y="115" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#d85a30">+ credit card balances</text>
+
+      <!-- Equals sign -->
+      <text x="474" y="95" text-anchor="middle" font-family="Nunito,sans-serif" font-size="28" font-weight="900" fill="#b7e4c7">=</text>
+
+      <!-- Net worth box -->
+      <rect x="494" y="30" width="156" height="110" rx="14" fill="#40916c"/>
+      <text x="572" y="58" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="rgba(255,255,255,0.7)" letter-spacing="0.1em">NET WORTH</text>
+      <text x="572" y="83" text-anchor="middle" font-family="Nunito,sans-serif" font-size="20" font-weight="900" fill="white">R 430 000</text>
+      <text x="572" y="101" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="rgba(255,255,255,0.65)">True financial position</text>
+      <text x="572" y="115" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="rgba(255,255,255,0.65)">after all debt</text>
+    </svg>
+    <div class="diagram-caption">Net worth = total assets − total liabilities · Add all your debts for an accurate picture</div>
+  </div>
+
+  <div class="feature-box">
+    <div class="feature-box-header">
+      <div class="feature-box-icon" style="background:#fff0ee">🏦</div>
+      <div><div class="feature-box-title">How to add a liability</div><div class="feature-box-subtitle">Wealth screen</div></div>
+    </div>
+    <div class="steps" style="border:none;border-radius:0;margin:0">
+      <div class="step" style="border-bottom:1px solid var(--border)"><div class="step-num">1</div><div class="step-body"><div class="step-title">Go to the Wealth screen</div><div class="step-desc">Tap Wealth in the nav. Scroll down past Investments and Savings Goals to find the Liabilities &amp; Debt section.</div></div></div>
+      <div class="step" style="border-bottom:1px solid var(--border)"><div class="step-num">2</div><div class="step-body"><div class="step-title">Tap + Add and fill in the details</div><div class="step-desc">Enter a name (e.g. <code>Home Loan — FNB</code>), select the type, enter the outstanding balance, the annual interest rate (e.g. <code>11.75</code>), and the minimum monthly payment.</div></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">The net worth updates immediately</div><div class="step-desc">Your net worth on the Overview screen will decrease by the liability balance. The Insights screen will show your debt-to-asset ratio and total monthly interest cost.</div></div></div>
+    </div>
+  </div>
+
+  <div class="tip"><div class="tip-icon">📋</div><div class="tip-body"><strong>Types supported:</strong> Home Loan, Vehicle Finance, Credit Card, Personal Loan, Student Loan, Other. Each shows monthly interest cost calculated as balance × rate ÷ 12.</div></div>
+
+  <div class="divider"></div>
+
+  <!-- CALCULATIONS EXPLAINED -->
+  <h2>How calculations work</h2>
+
+  <h3>Savings rate</h3>
+  <p>Your savings rate shows what percentage of your gross income you are directing into investments and savings goals via monthly contributions.</p>
+  <div class="calc-box">
+    <div class="calc-formula">Savings rate = (Investment contributions + savings contributions) ÷ gross income × 100</div>
+    <div class="calc-note">This reflects deliberate savings — not leftover cash. A rate of 20%+ is considered healthy. The Insights screen will flag if you are below 10%.</div>
+  </div>
+
+  <h3>True cash flow</h3>
+  <p>The true cash flow insight shows your real discretionary surplus after both expenses and savings commitments are accounted for.</p>
+  <div class="calc-box">
+    <div class="calc-formula">True cash flow = income − total expenses − savings/investment contributions</div>
+    <div class="calc-note">If this is negative, you are spending more than you earn even before savings — a warning sign. If it is positive, that is genuinely unallocated money.</div>
+  </div>
+
+  <h3>Budget pace warning</h3>
+  <p>In the current month, Freed projects your spend forward based on how much you have spent so far relative to how many days have passed.</p>
+  <div class="calc-box">
+    <div class="calc-formula">Projected spend = (spend so far ÷ days elapsed) × days in month</div>
+    <div class="calc-note">If the projected spend exceeds your budget for a category, it is flagged as "Overspending pace" in the Insights screen even before you have actually gone over.</div>
+  </div>
+
+  <h3>Retirement — nominal vs real value</h3>
+  <p>The retirement planner shows two figures: the nominal projected value (what the number will say on paper) and the real value adjusted for inflation (what that money will actually be worth in today's purchasing power).</p>
+
+  <div class="diagram-wrap">
+    <svg width="100%" viewBox="0 0 680 160" role="img">
+      <title>Retirement nominal vs real value diagram</title>
+      <desc>Two bars showing nominal value much larger than inflation-adjusted real value over 35 years</desc>
+      <!-- Labels -->
+      <text x="40" y="24" font-family="DM Mono,monospace" font-size="10" fill="#8fb89a" letter-spacing="0.08em">NOMINAL VALUE (what the number says)</text>
+      <text x="40" y="80" font-family="DM Mono,monospace" font-size="10" fill="#8fb89a" letter-spacing="0.08em">REAL VALUE (today's purchasing power)</text>
+
+      <!-- Nominal bar -->
+      <rect x="40" y="30" width="480" height="28" rx="6" fill="#40916c"/>
+      <text x="530" y="49" font-family="Nunito,sans-serif" font-size="13" font-weight="800" fill="#1b3a2d">R 12.4m</text>
+
+      <!-- Real bar (much shorter — inflation erodes ~50% over 35yr at 5.5%) -->
+      <rect x="40" y="86" width="226" height="28" rx="6" fill="#52b788"/>
+      <text x="276" y="105" font-family="Nunito,sans-serif" font-size="13" font-weight="800" fill="#1b3a2d">R 2.8m in today's money</text>
+
+      <!-- Inflation note -->
+      <text x="40" y="136" font-family="DM Mono,monospace" font-size="10" fill="#e76f51">⚠ At 5.5% inflation over 35 years, purchasing power drops by ~85%</text>
+      <text x="40" y="152" font-family="DM Mono,monospace" font-size="10" fill="#8fb89a">Set your freedom target in today's money — Freed checks if real value meets it</text>
+    </svg>
+    <div class="diagram-caption">Always set your freedom target in today's money — Freed will tell you if your real projected value meets it</div>
+  </div>
+
+  <div class="calc-box">
+    <div class="calc-formula">Real value = nominal FV ÷ (1 + inflation rate)^years</div>
+    <div class="calc-note">The default inflation rate is 5.5% (South African CPI average). Adjust it in the Retirement Settings panel. Your freedom target should be in today's money — e.g. "I need R 10m in today's purchasing power to retire".</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- TIPS -->
+  <h2>Tips and things to know</h2>
+
+  <div class="tip"><div class="tip-icon">◂▸</div><div class="tip-body"><strong>Navigate months</strong> using the arrows in the topbar. Each month is independent — income and expenses are tracked per month. Recurring transactions auto-apply when you switch to a new month.</div></div>
+  <div class="tip"><div class="tip-icon">☁</div><div class="tip-body"><strong>Auto-save:</strong> changes are written to Supabase roughly 800ms after your last edit. No save button needed. Your data syncs across all your devices automatically.</div></div>
+  <div class="tip"><div class="tip-icon">✕</div><div class="tip-body"><strong>Delete a transaction</strong> by tapping it in the Transactions tab. Tap a recurring transaction template in the Budgets tab to delete it. Tap any investment, saving, category or liability to edit or delete it.</div></div>
+  <div class="tip"><div class="tip-icon">💵</div><div class="tip-body"><strong>Set income</strong> by tapping the income figure (R 0) on the Overview screen. Income is per-month and must be set each month, unless you add your salary as a recurring income transaction.</div></div>
+  <div class="tip"><div class="tip-icon">📱</div><div class="tip-body"><strong>Install as an app</strong> — Android: Chrome menu → Add to Home Screen. iOS: Safari Share button → Add to Home Screen. The app requires HTTPS to install — it will not work from a local file.</div></div>
+  <div class="tip"><div class="tip-icon">🔐</div><div class="tip-body"><strong>Security:</strong> all data is stored in a Supabase database with Row Level Security enabled. Each user can only read and write their own row — not other users' data. Passwords are managed by Supabase Auth.</div></div>
+
+</div>
+</body>
+</html>

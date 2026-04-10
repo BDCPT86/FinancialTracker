@@ -711,6 +711,34 @@ body {
 .auth-switch { font-size: 0.8rem; color: var(--text3); text-align: center; margin-top: 16px; line-height: 1.9; }
 .auth-switch span { color: var(--green2); cursor: pointer; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
 
+.budget-summary-card {
+  background: var(--green7);
+  border: 1px solid var(--border2);
+  border-radius: var(--r2);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+.bsc-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text2);
+  border-bottom: 1px solid var(--border);
+}
+.bsc-row:last-child { border-bottom: none; }
+.bsc-row span:last-child { font-family: var(--mono); font-size: 0.85rem; }
+
+.budget-row-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 12px 14px;
+  margin-bottom: 8px;
+}
+
 /* ── MOBILE-ONLY ELEMENTS (hidden by default) ── */
 .mobile-topbar { display: none; }
 .mobile-menu { display: none; }
