@@ -731,7 +731,7 @@ body {
   .mobile-month { display: flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 0.72rem; font-weight: 600; color: var(--text); }
   .mobile-month button { background: var(--green6); border: none; color: var(--green2); width: 26px; height: 26px; border-radius: 8px; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; touch-action: manipulation; }
 
-  .content-scroll { padding: 14px 14px 0; }
+  .content-scroll { padding: 14px 14px calc(72px + var(--safe-bottom) + 16px); }
   .page-panel { border-radius: var(--r2); padding: 16px; min-height: unset; margin-bottom: 4px; }
   .hero-card { flex-direction: column; gap: 16px; }
   .hero-left { width: 100%; }
@@ -742,10 +742,14 @@ body {
     display: flex;
     justify-content: space-around;
     align-items: flex-start;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
     padding: 8px 4px calc(var(--safe-bottom) + 8px);
-    background: white;
+    background: rgba(255,255,255,0.97);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border-top: 1px solid var(--border);
-    flex-shrink: 0;
+    z-index: 200;
   }
   .nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; background: none; border: none; cursor: pointer; padding: 6px 10px; min-width: 52px; border-radius: 12px; transition: all 0.2s; color: var(--text3); touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
   .nav-item.active { color: var(--green2); background: var(--green6); }
