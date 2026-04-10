@@ -87,11 +87,30 @@ function showAuth(mode = 'login') {
 function showApp() {
   document.getElementById('authScreen').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
+  const initial = (currentUser.email||'F')[0].toUpperCase();
   const emailEl = document.getElementById('userEmail');
   if (emailEl) emailEl.textContent = currentUser.email;
   const avatarEl = document.getElementById('topbarAvatar');
-  if (avatarEl) avatarEl.textContent = (currentUser.email||'F')[0].toUpperCase();
+  if (avatarEl) avatarEl.textContent = initial;
+  const mobileAvatarEl = document.getElementById('mobileAvatarBtn');
+  if (mobileAvatarEl) mobileAvatarEl.textContent = initial;
+  const mobileEmailEl = document.getElementById('mobileUserEmail');
+  if (mobileEmailEl) mobileEmailEl.textContent = currentUser.email;
 }
+
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobileMenu');
+  if (menu) menu.classList.toggle('open');
+}
+
+// Close mobile menu when tapping outside
+document.addEventListener('click', e => {
+  const menu = document.getElementById('mobileMenu');
+  const btn = document.getElementById('mobileAvatarBtn');
+  if (menu && menu.classList.contains('open') && !menu.contains(e.target) && e.target !== btn) {
+    menu.classList.remove('open');
+  }
+});
 
 function renderAuthForm(mode) {
   const isLogin = mode === 'login';
